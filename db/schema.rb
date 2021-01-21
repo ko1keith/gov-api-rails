@@ -10,10 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_19_230428) do
+ActiveRecord::Schema.define(version: 2021_01_21_183047) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "addresses", force: :cascade do |t|
+    t.string "street"
+    t.integer "street_number"
+    t.string "postal_code"
+    t.string "region"
+    t.string "province"
+    t.string "unit"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "constituency_id"
+    t.index ["constituency_id"], name: "index_addresses_on_constituency_id"
+  end
 
   create_table "constituencies", force: :cascade do |t|
     t.integer "district_number"
@@ -38,5 +51,6 @@ ActiveRecord::Schema.define(version: 2021_01_19_230428) do
     t.index ["constituency_id"], name: "index_members_on_constituency_id"
   end
 
+  add_foreign_key "addresses", "constituencies"
   add_foreign_key "members", "constituencies"
 end

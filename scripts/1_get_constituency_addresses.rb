@@ -1,10 +1,25 @@
 require 'HTTParty'
 
+def is_postal_code(str)
+  # check to see if string is postal code, 7 chars long, 3 Letters, 3 Numbers
+end
+
+def extract_info(p)
+  # extract address info
+  p.each do |single_p|
+    # mulitple p tags, find the one with "Main Office"
+    next unless single_p.text.include? 'Main office'
+
+    # main office
+    arr = single_p.text.strip.split("\r\n").map(&:strip)
+    puts arr
+  end
+  {}
+end
+
 html = HTTParty.get('https://www.ourcommons.ca/members/en/constituencies/addresses')
 doc = Nokogiri::HTML(html)
 
-# addresses = doc.css('row')
-# puts addresses
 row_elem = doc.search('.row')
 puts row_elem.size
 addresses = nil
@@ -14,6 +29,8 @@ row_elem.each do |row|
 end
 
 addresses.each do |add|
-  puts add
+  puts add.at('h2').text.gsub('—', '-')
+  address_info = extract_info(add.search('p'))
+  puts address_info
   sleep(2)
 end

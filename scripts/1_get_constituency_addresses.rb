@@ -1,5 +1,5 @@
 require 'HTTParty'
-puts 'test'
+
 html = HTTParty.get('https://www.ourcommons.ca/members/en/constituencies/addresses')
 doc = Nokogiri::HTML(html)
 
@@ -16,5 +16,4 @@ end
 addresses.each do |add|
   puts add
   sleep(2)
-  
 end

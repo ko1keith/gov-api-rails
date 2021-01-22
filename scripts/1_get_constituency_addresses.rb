@@ -1,23 +1,48 @@
-require 'HTTParty'
-
+require 'open-uri'
 def is_postal_code(str)
   # check to see if string is postal code, 7 chars long, 3 Letters, 3 Numbers
 end
 
 def extract_info(p)
   # extract address info
+  addr = {}
   p.each do |single_p|
     # mulitple p tags, find the one with "Main Office"
     next unless single_p.text.include? 'Main office'
 
     # main office
-    arr = single_p.text.strip.split("\r\n").map(&:strip)
-    puts arr
+    array_of_texts = []
+    single_p.children.map { |child| array_of_texts.append(child.text) if child.name == 'text' }
+    arr = array_of_texts.map { |elem| elem.gsub("\r\n", '').strip }
+    arr.each do |line|
+      if line.include? '(Main office)'
+        addr['street'] = line.gsub('(Main office)', '')
+      elsif line.include?('Suite') || line.include?('Unit')
+        addr['unit'] = line
+      elsif line.include?(',') && !line.include?('Main office')
+        area = line.split(',')
+        addr['region'] = area[0].strip
+        addr['province'] = area[1].strip
+      elsif line.size == 7
+        letters = 0
+        numbers = 0
+        line.gsub(' ', '').split('').each do |char|
+          if char.match?(/[[:alpha:]]/)
+            letters += 1
+          else
+            numbers += 1
+          end
+        end
+        addr['postal_code'] = line if (letters == 3) && (numbers == 3)
+      elsif line.include? 'Telephone'
+        number = line.split(':')[1]
+        addr['telephone'] = number.strip
+      end
+    end
   end
-  {}
 end
 
-html = HTTParty.get('https://www.ourcommons.ca/members/en/constituencies/addresses')
+html = URI.open('https://www.ourcommons.ca/members/en/constituencies/addresses')
 doc = Nokogiri::HTML(html)
 
 row_elem = doc.search('.row')
@@ -29,8 +54,6 @@ row_elem.each do |row|
 end
 
 addresses.each do |add|
-  puts add.at('h2').text.gsub('—', '-')
-  address_info = extract_info(add.search('p'))
-  puts address_info
-  sleep(2)
+  constituency = Constituency.find_by(name: add.at('h2').text.gsub('—', '-'))
+  address_info = extract_info(add.search('p')) if constituency
 end

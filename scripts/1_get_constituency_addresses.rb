@@ -1,7 +1,4 @@
 require 'open-uri'
-def is_postal_code(str)
-  # check to see if string is postal code, 7 chars long, 3 Letters, 3 Numbers
-end
 
 def extract_info(p)
   # extract address info
@@ -40,6 +37,7 @@ def extract_info(p)
       end
     end
   end
+  addr
 end
 
 html = URI.open('https://www.ourcommons.ca/members/en/constituencies/addresses')
@@ -55,5 +53,14 @@ end
 
 addresses.each do |add|
   constituency = Constituency.find_by(name: add.at('h2').text.gsub('—', '-'))
-  address_info = extract_info(add.search('p')) if constituency
+
+  address_info = extract_info(add.search('p'))
+  begin
+    created_address = Address.new(street: address_info['street'], unit: address_info['unit'], region: address_info['region'],
+                                  province: address_info['province'], postal_code: address_info['postal_code'], telephone: address_info['telephone'])
+    created_address.constituency = constituency
+    created_address.save
+  rescue StandardError
+    binding.pry
+  end
 end

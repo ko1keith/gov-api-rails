@@ -53,14 +53,11 @@ end
 
 addresses.each do |add|
   constituency = Constituency.find_by(name: add.at('h2').text.gsub('—', '-'))
+  next unless constituency && !constituency.addresses
 
   address_info = extract_info(add.search('p'))
-  begin
-    created_address = Address.new(street: address_info['street'], unit: address_info['unit'], region: address_info['region'],
-                                  province: address_info['province'], postal_code: address_info['postal_code'], telephone: address_info['telephone'])
-    created_address.constituency = constituency
-    created_address.save
-  rescue StandardError
-    binding.pry
-  end
+  created_address = Address.new(street: address_info['street'], unit: address_info['unit'], region: address_info['region'],
+                                province: address_info['province'], postal_code: address_info['postal_code'], telephone: address_info['telephone'])
+  created_address.constituency = constituency
+  created_address.save
 end

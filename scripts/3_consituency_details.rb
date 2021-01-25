@@ -4,12 +4,9 @@ puts 'Starting Script...'
 html = URI.open('https://www.ourcommons.ca/members/en/constituencies/')
 doc = Nokogiri::HTML(html)
 
-# puts doc.at_css('div#mip-tile-section')
-section = doc.css('.mip-constituency-tile')
-
 constituencies = Constituency.all
 
-section.each do |tile|
+doc.css('.mip-constituency-tile').each do |tile|
   constituency = constituencies.find_by(name: tile.css('.mip-constituency-name').text.gsub('—', '-'))
   next unless constituency && !constituency.district_number.present?
 

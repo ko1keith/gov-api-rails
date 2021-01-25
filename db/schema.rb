@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_25_224409) do
+ActiveRecord::Schema.define(version: 2021_01_25_230454) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,6 +40,21 @@ ActiveRecord::Schema.define(version: 2021_01_25_224409) do
     t.string "current_caucus"
   end
 
+  create_table "expenditures", force: :cascade do |t|
+    t.string "category"
+    t.string "subcategory"
+    t.date "start_date"
+    t.date "end_date"
+    t.decimal "member_budget"
+    t.decimal "resources_provided_by_house"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.bigint "member_id"
+    t.bigint "constituency_id"
+    t.index ["constituency_id"], name: "index_expenditures_on_constituency_id"
+    t.index ["member_id"], name: "index_expenditures_on_member_id"
+  end
+
   create_table "members", force: :cascade do |t|
     t.string "email"
     t.string "first_name"
@@ -54,5 +69,7 @@ ActiveRecord::Schema.define(version: 2021_01_25_224409) do
   end
 
   add_foreign_key "addresses", "constituencies"
+  add_foreign_key "expenditures", "constituencies"
+  add_foreign_key "expenditures", "members"
   add_foreign_key "members", "constituencies"
 end

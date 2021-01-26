@@ -1,7 +1,7 @@
 require 'open-uri'
 puts 'Starting Script...'
 
-html = URI.open('https://www.ourcommons.ca/members/en/constituencies/')
+html = URI.parse('https://www.ourcommons.ca/members/en/constituencies/').open
 doc = Nokogiri::HTML(html)
 
 constituencies = Constituency.all
@@ -11,10 +11,10 @@ doc.css('.mip-constituency-tile').each do |tile|
   next unless constituency && !constituency.district_number.present?
 
   # follow link, get new html
-  html_constit = URI.open('https://www.ourcommons.ca' + tile.attributes['href'].text)
+  html_constit = URI.parse('https://www.ourcommons.ca' + tile.attributes['href'].text).open
   doc_constit = Nokogiri::HTML(html_constit)
   elections_url = doc_constit.search('.col-5')[1].children[1].attribute('href').text
-  html_elections = URI.open(elections_url)
+  html_elections = URI.parse(elections_url).open
   doc_elections = Nokogiri::HTML(html_elections)
   profilelist_element = doc_elections.search('.profilelist').children
   profilelist_element.each_with_index do |child, i|

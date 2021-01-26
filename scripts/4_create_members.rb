@@ -2,12 +2,12 @@ require 'open-uri'
 puts 'Starting Script...'
 base_url = 'https://www.ourcommons.ca'
 search_url = 'https://www.ourcommons.ca/members/en/search/'
-html = URI.open(search_url)
+html = URI.parse(search_url).open
 doc = Nokogiri::HTML(html)
 
 doc.css('.ce-mip-mp-tile').each_with_index do |tile, count|
   puts "Count: #{count}"
-  html = URI.open(base_url + tile.attribute('href').text)
+  html = URI.parse(base_url + tile.attribute('href').text).open
   member_doc = Nokogiri::HTML(html)
   name = member_doc.css('h1').text.gsub('The', '').gsub('Honourable', '').split(' ')
 

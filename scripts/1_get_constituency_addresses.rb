@@ -40,7 +40,7 @@ def extract_info(p)
   addr
 end
 
-html = URI.open('https://www.ourcommons.ca/members/en/constituencies/addresses')
+html = URI.parse('https://www.ourcommons.ca/members/en/constituencies/addresses').open
 doc = Nokogiri::HTML(html)
 
 row_elem = doc.search('.row')

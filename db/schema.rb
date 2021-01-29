@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_27_232253) do
+ActiveRecord::Schema.define(version: 2021_01_29_195023) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,6 +52,7 @@ ActiveRecord::Schema.define(version: 2021_01_27_232253) do
     t.bigint "member_id"
     t.bigint "constituency_id"
     t.decimal "total"
+    t.string "party"
     t.index ["constituency_id"], name: "index_expenditures_on_constituency_id"
     t.index ["member_id"], name: "index_expenditures_on_member_id"
   end

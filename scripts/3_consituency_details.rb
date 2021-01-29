@@ -7,7 +7,8 @@ doc = Nokogiri::HTML(html)
 constituencies = Constituency.all
 
 doc.css('.mip-constituency-tile').each do |tile|
-  constituency = constituencies.find_by(name: tile.css('.mip-constituency-name').text.gsub('—', '-'))
+  const_name = tile.css('.mip-constituency-name').text.gsub('—', ' ').gsub('-', ' ').downcase
+  constituency = constituencies.find_by(name: const_name)
   next unless constituency && !constituency.district_number.present?
 
   # follow link, get new html
@@ -31,7 +32,7 @@ doc.css('.mip-constituency-tile').each do |tile|
       puts("Updating #{constituency.name} population")
       constituency.update(population: profilelist_element[i + 2].text.gsub(',', '').to_i)
     elsif child.text == 'Number of electors on list****:' && constituency.number_of_electors.nil?
-      puts("Updating #{constituency.name}  electors")
+      puts("Updating #{constituency.name} electors")
       constituency.update(number_of_electors: profilelist_element[i + 2].text.gsub(',', '').to_i)
     end
   end

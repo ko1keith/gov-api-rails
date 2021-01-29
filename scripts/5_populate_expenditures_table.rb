@@ -46,7 +46,7 @@ def extract_cat_info(category)
     # if char at index 2 is integer, then it is category
     category_name = sub_category_id_parents[category.attribute('id').value[0..1].to_sym]
   end
-  exp = Expenditure.new(
+  Expenditure.new(
     member_budget: member_budget,
     resources_provided_by_house: resources_by_house,
     total: total,
@@ -61,21 +61,11 @@ html = URI.parse(base_url).open
 doc = Nokogiri::HTML(html)
 previous_years_div = doc.css('.reports-previous-specific-year-container')
 previous_years_div.each do |report_div|
-  next if report_div.attributes['data-year'].value.split('-').include? '2012'
-  next if report_div.attributes['data-year'].value.split('-').include? '2015'
-  next if report_div.attributes['data-year'].value.split('-').include? '2016'
-  next if report_div.attributes['data-year'].value.split('-').include? '2017'
-  next if report_div.attributes['data-year'].value.split('-').include? '2018'
-  next if report_div.attributes['data-year'].value.split('-').include? '2019'
-  next if report_div.attributes['data-year'].value.split('-').include? '2020'
+  years = report_div.attributes['data-year'].value.split('-').map { |year| year&.to_i }
+  next if years.any? { |year| year <= 2012 }
 
   report_div.css('.reports-previous-buttons-4').each do |quarter_report_div|
-    binding.pry
     html_quarter = URI.parse("https://www.ourcommons.ca#{quarter_report_div.children[1].attribute('href').text}").open
-    if quarter_report_div.children[1].attribute('href').text == '/PublicDisclosure/UnderstandingReport.aspx?Id=MER2013FY&Language=E'
-      # bad link, sends to 2020 instead, so skip
-      next
-    end
 
     doc_quarter = Nokogiri::HTML(html_quarter)
     expend_by_members_link = "https://www.ourcommons.ca/PublicDisclosure/#{doc_quarter.search('a#ctl00_lnkMemberExpenditures\\.aspx')[0].attribute('href').text}&FormatType=XML"
@@ -85,7 +75,14 @@ previous_years_div.each do |report_div|
     end_date = expend_by_members_xml.attribute('endDate').text
 
     expend_by_members_xml.css('Report').each do |report|
-      constit = Constituency.find_by(name: report.css('Constituency').first.attribute('name-en').text.gsub('—', '-'))
+      begin
+        constit = Constituency.find_by(district_number: report.css('Constituency').first.attribute('electionCanadaCode').text.to_i)
+      rescue StandardError
+        constit = Constituency.find_by(name: report.css('Constituency').first.attribute('name-en').text.gsub('—', ' ').gsub(
+          '-', ' '
+        ).downcase)
+      end
+
       if report.css('Member').first.attribute('status').text == 'Vacant'
         first_name = 'Vacant'
         last_name = 'Vacant'
@@ -94,6 +91,8 @@ previous_years_div.each do |report_div|
         last_name = report.css('Member').first.attribute('lastName').text.downcase
       end
       member = Member.find_by(first_name: first_name, last_name: last_name)
+      next if constit.nil? && member.nil?
+
       count = 0
       report.css('ExpenditureCategories').children.each do |category|
         exps = iterate_cat_info(category)
@@ -104,6 +103,7 @@ previous_years_div.each do |report_div|
           exp.end_date = end_date
           exp.member = member
           exp.constituency = constit
+          exp.save
         end
         count += exps.count
       end

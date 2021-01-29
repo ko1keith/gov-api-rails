@@ -11,13 +11,13 @@ doc.css('.ce-mip-mp-tile').each_with_index do |tile, count|
   member_doc = Nokogiri::HTML(html)
   name = member_doc.css('h1').text.gsub('The', '').gsub('Honourable', '').split(' ')
 
-  member = Member.find_by(first_name: name[0].downcase, last_name: name[1].downcase)
+  member = Member.find_by(first_name: name.first.downcase, last_name: name.last.downcase)
   next if member
 
   overview = member_doc.css('.ce-mip-overview')[0].children.at_css('dl').children
   political_affiliation = overview.css('.mip-mp-profile-caucus').text
 
-  constituency_name = overview.search('a').text.gsub('—', '-')
+  constituency_name = overview.search('a').text.gsub('—', ' ').downcase
   constituencies = Constituency.all
   constituency = constituencies.find_by(name: constituency_name)
   next unless constituency

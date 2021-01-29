@@ -7,6 +7,7 @@ doc = Nokogiri::HTML(html)
 
 doc.css('.ce-mip-mp-tile').each_with_index do |tile, count|
   puts "Count: #{count}"
+
   html = URI.parse(base_url + tile.attribute('href').text).open
   member_doc = Nokogiri::HTML(html)
   name = member_doc.css('h1').text.gsub('The', '').gsub('Honourable', '').split(' ')
@@ -16,10 +17,8 @@ doc.css('.ce-mip-mp-tile').each_with_index do |tile, count|
 
   overview = member_doc.css('.ce-mip-overview')[0].children.at_css('dl').children
   political_affiliation = overview.css('.mip-mp-profile-caucus').text
-
-  constituency_name = overview.search('a').text.gsub('—', ' ').downcase
-  constituencies = Constituency.all
-  constituency = constituencies.find_by(name: constituency_name)
+  constituency_name = overview.search('a').text.gsub('—', ' ').gsub('-', ' ').downcase
+  constituency = Constituency.find_by(name: constituency_name)
   next unless constituency
 
   contact_card = member_doc.at_css('div#contact').css('.container').children
@@ -32,13 +31,13 @@ doc.css('.ce-mip-mp-tile').each_with_index do |tile, count|
       website = contact_card[i + 2].text
     end
   end
-  puts "Creating new member: #{name[0]} #{name[1]}.... "
+  puts "Creating new member: #{name.first} #{name.last}.... "
   puts "Party: #{political_affiliation}"
   puts "email: #{email}"
   puts "website: #{website}"
   puts '================'
 
-  member = Member.new(first_name: name[0].downcase, last_name: name[1].downcase, party: political_affiliation.downcase, email: email.downcase,
+  member = Member.new(first_name: name.first.downcase, last_name: name.last.downcase, party: political_affiliation.downcase, email: email.downcase,
                       website: website.downcase)
   member.constituency = constituency
   member.save

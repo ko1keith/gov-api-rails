@@ -26,18 +26,19 @@ class Api::V1::ExpendituresController < ApplicationController
       search_params.each do |search|
         query_string += search + ' and '
       end
+      # remove last 5 characters from queary string
       query_string = query_string[0..-6]
-      binding.pry
-      if index_param['member_first_name'] && index_params['member_last_name']
+      if index_params['member_first_name'] && index_params['member_last_name']
         exps = Expenditure.includes(:member).where(member: { first_name: index_params['member_first_name'].downcase,
                                                              last_name: index_params['member_last_name'].downcase }).where(query_string).limit(limit)
       elsif index_params['cinstituency'] == 'constituency'
         exps = Expenditure.includes(:constituency).where(constituency: { name: index_params['constituency'].downcase }).where(query_string).limit(limit)
+      else
+        exps = Expenditure.where(query_string)
       end
     else
       exps = Expenditures.all
     end
-
     render json: exps
   end
 

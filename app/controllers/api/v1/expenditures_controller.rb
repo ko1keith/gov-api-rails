@@ -38,10 +38,11 @@ class Api::V1::ExpendituresController < ApplicationController
       else
         exps = Expenditure.where(query_string)
       end
+      return render json: { "Error": 'Unable to find expenditures.' }, status: 404 if exps.empty?
     else
       exps = Expenditures.all
     end
-    render json: exps
+    render json: exps, status: 200
   end
 
   private

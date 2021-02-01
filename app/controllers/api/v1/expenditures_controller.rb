@@ -36,13 +36,15 @@ class Api::V1::ExpendituresController < ApplicationController
       elsif index_params['cinstituency'] == 'constituency'
         exps = Expenditure.includes(:constituency).where(constituency: { name: index_params['constituency'].downcase }).where(query_string).limit(limit)
       else
-        exps = Expenditure.where(query_string)
+        exps = Expenditure.where(query_string).limit(limit)
       end
       return render json: { "Error": 'Unable to find expenditures.' }, status: 404 if exps.empty?
     else
+      binding.pry
       exps = Expenditures.all
     end
-    render json: exps, status: 200
+    exps_json = ExpenditureSerializer.new(exps).serializable_hash.to_json
+    render json: exps_json
   end
 
   private

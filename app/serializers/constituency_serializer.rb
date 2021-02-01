@@ -1,7 +1,7 @@
-class MemberSerializer < ActiveModel::Serializer
+class ConstituencySerializer < ActiveModel::Serializer
   include JSONAPI::Serializer
 
-  attributes :email, :first_name, :last_name, :website, :party, :constituency
+  attributes :name, :district_number, :region, :area, :population, :number_of_electors, :current_caucus
 
   # def constituency
   #   {

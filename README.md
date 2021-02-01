@@ -16,3 +16,13 @@ https://docs.google.com/document/d/1LVN5lgiu5Ns-K2WMwBDbMXHmXoIdQwUC3xuQx6_VNAg/
 - design choices
 - limitations
 - etc
+
+## API Endpoint
+localhost...soon to be heroku
+
+## Usage
+
+
+## Local Install (for macOS)
+- Postgresql 
+- 

@@ -1,4 +1,6 @@
 class Api::V1::ExpendituresController < ApplicationController
+  before_action :validate_dates
+
   def index
     search_params = []
     limit = 1000
@@ -43,6 +45,14 @@ class Api::V1::ExpendituresController < ApplicationController
   end
 
   private
+
+  def validate_dates
+    index_params.slice('start_date', 'end_date', 'before_date', 'after_date').each do |date_param|
+      date_param[1].to_date
+    rescue StandardError
+      return render json: { "Error": 'Invalid date format' }
+    end
+  end
 
   def show_params; end
 

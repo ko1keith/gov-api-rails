@@ -3,10 +3,16 @@ class MemberSerializer < ActiveModel::Serializer
 
   attributes :email, :first_name, :last_name, :website, :party, :constituency
 
-  # def constituency
-  #   {
-  #     name: object.constituency.name,
-  #     district_number: object.constituency.district_number
-  #   }
-  # end
+  attribute :constituency do |object|
+    {
+      "id": object.constituency.id,
+      "name": object.constituency.name,
+      "current_caucus": object.constituency.current_caucus,
+      "district_member": object.constituency.district_number,
+      "region": object.constituency.region,
+      "area": object.constituency.area,
+      "population": object.constituency.population,
+      "number_of_electors": object.constituency.number_of_electors
+    }
+  end
 end

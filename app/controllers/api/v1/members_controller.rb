@@ -1,12 +1,14 @@
 class Api::V1::MembersController < ApplicationController
   def index
-    members_of_parlaiment = if show_params
-                              Member.where(show_params)
-                            else
-                              Member.all
-                            end
+    member_of_p = if index_params['constituency_name'].present?
+                    Member.includes(:constituency).where(constituency: { name: index_params['constituency_name'] })
+                  else
+                    Member.where(index_params)
+                  end
+    return render json: { "Error": 'Unable to find members' }, status: 404 if member_of_p.nil?
 
-    render json: members_of_parlaiment
+    mem_json = MemberSerializer.new(member_of_p).serializable_hash.to_json
+    render json: mem_json
   end
 
   def show
@@ -17,7 +19,11 @@ class Api::V1::MembersController < ApplicationController
 
   private
 
+  def index_params
+    params.permit(:party, :first_name, :last_name, :constituency_name, :constituency_id)
+  end
+
   def show_params
-    params.permit(:id, :first_name, :last_name, :party, :constituency_district_number)
+    params.permit(:id)
   end
 end

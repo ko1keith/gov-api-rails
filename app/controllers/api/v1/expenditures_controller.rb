@@ -3,9 +3,9 @@ class Api::V1::ExpendituresController < ApplicationController
 
   def index
     search_params = []
-    limit = 1000
-    limit = index_params['limit'] if index_params['limit']
     if index_params
+      limit = 10_000
+      limit = index_params['limit'] if index_params['limit']
       index_params.each do |param|
         if param[0] == 'before_date'
           query = "start_date < '#{param[1].to_date}'"
@@ -40,7 +40,6 @@ class Api::V1::ExpendituresController < ApplicationController
       end
       return render json: { "Error": 'Unable to find expenditures.' }, status: 404 if exps.empty?
     else
-      binding.pry
       exps = Expenditures.all
     end
     exps_json = ExpenditureSerializer.new(exps).serializable_hash.to_json

@@ -12,8 +12,9 @@ class Api::V1::MembersController < ApplicationController
   end
 
   def show
-    binding.pry
     member_of_parlaiment = Member.find_by(id: show_params[:id])
+    return render json: { "Error": 'Unable to find members' }, status: 404 if member_of_parlaiment.nil?
+
     render json: member_of_parlaiment
   end
 

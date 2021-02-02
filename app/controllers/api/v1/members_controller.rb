@@ -2,8 +2,10 @@ class Api::V1::MembersController < ApplicationController
   def index
     member_of_p = if index_params['constituency_name'].present?
                     Member.includes(:constituency).where(constituency: { name: index_params['constituency_name'] })
-                  else
+                  elsif index_params.present?
                     Member.where(index_params)
+                  else
+                    Member.all
                   end
     return render json: { "Error": 'Unable to find members' }, status: 404 if member_of_p.nil?
 

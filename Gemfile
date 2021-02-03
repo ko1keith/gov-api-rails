@@ -22,7 +22,9 @@ gem 'active_model_serializers'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.4', require: false
 
+gem 'faker'
 gem 'jsonapi-serializer'
+gem 'rspec-rails'
 
 gem 'httparty'
 gem 'nokogiri'

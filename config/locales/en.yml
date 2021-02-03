@@ -31,3 +31,12 @@
 
 en:
   hello: "Hello world"
+
+en: 
+  faker:
+    name:
+      political_party:
+        - Liberal
+        - Conservative
+        - Independent
+        - New Democratic Party

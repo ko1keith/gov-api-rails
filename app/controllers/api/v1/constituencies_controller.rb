@@ -6,7 +6,7 @@ class Api::V1::ConstituenciesController < ApplicationController
                  Constituency.all
                end
 
-    return render json: { "Error": 'Unable to find constituencies' }, status: 404 if constits.nil?
+    return render json: { "error": 'Unable to find constituencies' }, status: 404 if constits.nil?
 
     constit_json = ConstituencySerializer.new(constits).serializable_hash.to_json
     render json: constit_json
@@ -14,7 +14,7 @@ class Api::V1::ConstituenciesController < ApplicationController
 
   def show
     constit = Constituency.find_by(id: show_params[:id])
-    return render json: { "Error": 'Unable to find members' }, status: 404 if constit.nil?
+    return render json: { "error": 'Unable to find members' }, status: 404 if constit.nil?
 
     constit_json = ConstituencySerializer.new(constit).serializable_hash.to_json
     render json: constit_json

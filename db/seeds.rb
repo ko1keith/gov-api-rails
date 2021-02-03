@@ -7,9 +7,10 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 require 'faker'
-
+Member.all.destroy_all
+Constituency.all.destroy_all
 (1..100).each do |_index|
-  Member.create!(
+  member = Member.new(
     email: Faker::Internet.email,
     first_name: Faker::Name.first_name,
     last_name: Faker::Name.last_name,
@@ -17,4 +18,17 @@ require 'faker'
     party: Faker::Name.political_party,
     status: 'active'
   )
+
+  constituency = Constituency.create!(
+    district_number: Faker::Number.number(digits: 5),
+    region: Faker::Nation.capital_city,
+    area: '100km',
+    population: Faker::Number.number(digits: 7),
+    number_of_electors: Faker::Number.number(digits: 6),
+    name: Faker::Address.city,
+    current_caucus: Faker::Name.political_party
+  )
+
+  member.constituency = constituency
+  member.save
 end

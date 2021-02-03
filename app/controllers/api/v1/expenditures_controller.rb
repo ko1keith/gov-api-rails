@@ -38,7 +38,7 @@ class Api::V1::ExpendituresController < ApplicationController
       else
         exps = Expenditure.where(query_string).limit(limit)
       end
-      return render json: { "Error": 'Unable to find expenditures.' }, status: 404 if exps.empty?
+      return render json: { "error": 'Unable to find expenditures.' }, status: 404 if exps.empty?
     else
       exps = Expenditures.all
     end
@@ -52,7 +52,7 @@ class Api::V1::ExpendituresController < ApplicationController
     index_params.slice('start_date', 'end_date', 'before_date', 'after_date').each do |date_param|
       date_param[1].to_date
     rescue StandardError
-      return render json: { "Error": 'Invalid date format' }
+      return render json: { "error": 'Invalid date format' }
     end
   end
 

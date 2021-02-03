@@ -7,7 +7,7 @@ class Api::V1::MembersController < ApplicationController
                   else
                     Member.all
                   end
-    return render json: { "Error": 'Unable to find members' }, status: 404 if member_of_p.nil?
+    return render json: { "error": 'Unable to find members' }, status: 404 if member_of_p.empty?
 
     mem_json = MemberSerializer.new(member_of_p).serializable_hash.to_json
     render json: mem_json
@@ -15,7 +15,7 @@ class Api::V1::MembersController < ApplicationController
 
   def show
     member_of_parlaiment = Member.find_by(id: show_params[:id])
-    return render json: { "Error": 'Unable to find members' }, status: 404 if member_of_parlaiment.nil?
+    return render json: { "error": 'Unable to find members' }, status: 404 if member_of_parlaiment.empty?
 
     render json: member_of_parlaiment
   end

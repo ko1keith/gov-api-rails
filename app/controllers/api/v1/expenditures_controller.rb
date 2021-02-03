@@ -33,7 +33,7 @@ class Api::V1::ExpendituresController < ApplicationController
       if index_params['member_first_name'] && index_params['member_last_name']
         exps = Expenditure.includes(:member).where(member: { first_name: index_params['member_first_name'].downcase,
                                                              last_name: index_params['member_last_name'].downcase }).where(query_string).limit(limit)
-      elsif index_params['cinstituency'] == 'constituency'
+      elsif index_params['constituency'] == 'constituency'
         exps = Expenditure.includes(:constituency).where(constituency: { name: index_params['constituency'].downcase }).where(query_string).limit(limit)
       else
         exps = Expenditure.where(query_string).limit(limit)
@@ -52,7 +52,7 @@ class Api::V1::ExpendituresController < ApplicationController
     index_params.slice('start_date', 'end_date', 'before_date', 'after_date').each do |date_param|
       date_param[1].to_date
     rescue StandardError
-      return render json: { "error": 'Invalid date format' }
+      return render json: { "error": 'Invalid date format' }, status: 400
     end
   end
 

@@ -8,8 +8,8 @@ Rails.application.routes.draw do
       end
       resources :expenditures, only: %i[show index]
 
-      get 'search/member', to: 'search#member'
-      get 'search/constituency', to: 'search#constituency'
+      get 'search/member', to: 'searches#member'
+      get 'search/constituency', to: 'searches#constituency'
     end
   end
 end

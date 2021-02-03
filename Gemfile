@@ -23,6 +23,8 @@ gem 'active_model_serializers'
 gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'faker'
+gem 'geocoder'
+gem 'httparty'
 gem 'jsonapi-serializer'
 gem 'rspec-rails'
 

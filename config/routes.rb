@@ -7,6 +7,9 @@ Rails.application.routes.draw do
         resources :addresses
       end
       resources :expenditures, only: %i[show index]
+
+      get 'search/member', to: 'search#member'
+      get 'search/constituency', to: 'search#constituency'
     end
   end
 end

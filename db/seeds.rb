@@ -9,6 +9,7 @@
 require 'faker'
 Member.all.destroy_all
 Constituency.all.destroy_all
+Expenditure.all.destroy_all
 (1..100).each do |_index|
   member = Member.new(
     email: Faker::Internet.email,
@@ -29,6 +30,19 @@ Constituency.all.destroy_all
     current_caucus: Faker::Name.political_party
   )
 
+  expenditure = Expenditure.new(
+    category: Faker::Name.category,
+    subcategory: Faker::Name.category,
+    start_date: Date.today,
+    end_date: Date.today,
+    member_budget: Faker::Number.decimal(l_digits: 5, r_digits: 3),
+    resources_provided_by_house: Faker::Number.decimal(l_digits: 5, r_digits: 3),
+    total: Faker::Number.decimal(l_digits: 5, r_digits: 3),
+    party: Faker::Name.political_party
+  )
+  expenditure.member = member
+  expenditure.constituency = constituency
+  expenditure.save
   member.constituency = constituency
   member.save
 end

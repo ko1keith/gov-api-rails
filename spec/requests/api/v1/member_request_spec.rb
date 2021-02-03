@@ -38,4 +38,7 @@ RSpec.describe 'Members', type: :request do
       expect(json_response.keys).to match_array(['error'])
     end
   end
+
+  describe 'GET /show' do
+  end
 end

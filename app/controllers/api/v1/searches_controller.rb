@@ -5,8 +5,19 @@ class Api::V1::SearchesController < ApplicationController
     lat_long = Geocoder.search(member_params['query']).first.data.slice('lat', 'lon')
     return render json: { "error": 'no address found' }, status: 404 if lat_long.nil?
 
-    member = RepresentSearch.new(lat_long).search_member
-    render json: member
+    member_json = RepresentSearch.new(lat_long).search_member
+    return render json: { "error": 'no members found' }, status: 404 if member_json['objects'].empty?
+
+    mem_arr = []
+    member_json['objects'].each do |obj|
+      first_name = obj['first_name'].downcase
+      last_name = obj['last_name'].downcase
+      mem = Member.find_by(first_name: first_name, last_name: last_name)
+      mem_arr << mem
+    end
+    # find other info, expenditures, constituency
+
+    render json: mem_arr
   end
 
   def constituency

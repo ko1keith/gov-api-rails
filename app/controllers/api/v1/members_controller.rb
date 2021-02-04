@@ -7,6 +7,8 @@ class Api::V1::MembersController < ApplicationController
                   else
                     Member.all
                   end
+
+    binding.pry
     return render json: { "error": 'Unable to find members' }, status: 404 if member_of_p.empty?
 
     mem_json = MemberSerializer.new(member_of_p).serializable_hash.to_json

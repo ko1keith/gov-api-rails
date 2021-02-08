@@ -2,6 +2,9 @@ class Api::V1::SearchesController < ApplicationController
   def member
     return render json: { "error": 'only one input parameter allowed' } if member_params.keys.count > 1
 
+    # Geocoder.search returns a one element array of type GEOCODER::Result::Nominatim, which has an attribute
+    # called data, which is of type hash. So get the first and only element of the returned array, get the data hash
+    # from the GEOCODER object, and get the latitute and longitude values from the 'lat' and 'lon' keys
     lat_long = Geocoder.search(member_params['point']).first.data.slice('lat', 'lon')
     return render json: { "error": 'no address found' }, status: 404 if lat_long.nil?
 
@@ -21,6 +24,15 @@ class Api::V1::SearchesController < ApplicationController
   end
 
   def constituency
+    return render json: { "error": 'only one input parameter allowed' } if constituency_params.keys.count > 1
+
+    if constituency_params['address']
+      lat_long = Geocoder.search(constituency_params['address']).first.data.slice('lat', 'lon')
+    elsif consituency_params['ip_address']
+      lat_long = Geocoder.search(constituency_params['ip_address']).first.data.slice('lat', 'lon')
+
+    end
+    binding.pry
     puts constituency_params
   end
 

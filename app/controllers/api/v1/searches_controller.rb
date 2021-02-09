@@ -30,8 +30,9 @@ class Api::V1::SearchesController < ApplicationController
       lat_long = Geocoder.search(constituency_params['address']).first.data.slice('lat', 'lon')
     elsif consituency_params['ip_address']
       lat_long = Geocoder.search(constituency_params['ip_address']).first.data.slice('lat', 'lon')
-
     end
+
+    
     binding.pry
     puts constituency_params
   end

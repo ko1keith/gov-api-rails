@@ -27,6 +27,7 @@ gem 'geocoder'
 gem 'httparty'
 gem 'jsonapi-serializer'
 gem 'rspec-rails'
+gem 'sidekiq'
 
 gem 'httparty'
 gem 'nokogiri'

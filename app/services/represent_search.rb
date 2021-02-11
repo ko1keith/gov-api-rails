@@ -13,5 +13,7 @@ class RepresentSearch
 
   def search_constituency
     base_url = "https://represent.opennorth.ca/representatives/house-of-commons/?point=#{@point}"
+    response = HTTParty.get(base_url, body: { point: @point })
+    json_response = JSON.parse(response.body)
   end
 end

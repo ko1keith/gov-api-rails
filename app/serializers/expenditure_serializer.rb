@@ -15,8 +15,3 @@ class ExpenditureSerializer
     }
   end
 end
-
-# class ExpenditureSerializer < ActiveModel::Serializer
-#   attributes :category, :subcategory, :start_date, :end_date, :member_budget, :resources_provided_by_house, :total,
-#              :party, :member
-# end
